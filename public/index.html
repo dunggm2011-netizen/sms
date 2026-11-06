@@ -3,53 +3,52 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SMS Bomber</title>
+  <title>Web Crack — TDUY DEV</title>
   <style>
     * { box-sizing: border-box; }
     body {
       margin: 0; padding: 0; min-height: 100vh;
-      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-      color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: radial-gradient(circle at 50% 10%, #1a0033 0%, #000 80%);
+      color: #fff; font-family: 'Consolas', monospace;
       display: flex; align-items: center; justify-content: center;
     }
     .container {
-      background: rgba(255,255,255,0.05); backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;
-      padding: 40px; width: 90%; max-width: 500px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(0,255,255,0.2);
+      border-radius: 16px; padding: 40px; width: 90%; max-width: 600px;
+      box-shadow: 0 0 60px rgba(0,255,255,0.1);
     }
     h1 {
-      text-align: center; font-size: 28px; margin: 0 0 10px;
-      background: linear-gradient(90deg, #ff00cc, #3333ff);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      text-align: center; font-size: 24px; margin: 0 0 8px;
+      color: #0ff; text-shadow: 0 0 10px #0ff;
+      letter-spacing: 2px;
     }
-    .subtitle { text-align: center; color: #888; font-size: 14px; margin-bottom: 30px; }
-    label { display: block; margin-bottom: 8px; color: #aaa; font-size: 14px; }
+    .subtitle { text-align: center; color: #555; font-size: 13px; margin-bottom: 30px; }
+    label { display: block; margin-bottom: 8px; color: #0ff; font-size: 13px; }
     input {
       width: 100%; padding: 14px 16px; margin-bottom: 20px;
-      background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 10px; color: #fff; font-size: 16px; outline: none;
-      transition: border 0.3s;
+      background: #000; border: 1px solid #0ff; border-radius: 8px;
+      color: #0ff; font-size: 15px; outline: none; font-family: inherit;
     }
-    input:focus { border-color: #ff00cc; }
+    input:focus { box-shadow: 0 0 20px rgba(0,255,255,0.3); }
     button {
-      width: 100%; padding: 16px; border: none; border-radius: 10px;
-      background: linear-gradient(90deg, #ff00cc, #3333ff);
-      color: #fff; font-size: 18px; font-weight: bold; cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
+      width: 100%; padding: 16px; border: none; border-radius: 8px;
+      background: linear-gradient(90deg, #0ff, #00f);
+      color: #000; font-size: 16px; font-weight: bold; cursor: pointer;
+      font-family: inherit; letter-spacing: 1px;
     }
-    button:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255,0,204,0.4); }
-    button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    button:hover { box-shadow: 0 0 30px rgba(0,255,255,0.5); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
     #result {
-      margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3);
-      border-radius: 10px; font-size: 14px; line-height: 1.6;
-      max-height: 300px; overflow-y: auto; display: none;
+      margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.5);
+      border: 1px solid rgba(0,255,255,0.2); border-radius: 8px;
+      font-size: 13px; line-height: 1.6; display: none; word-break: break-all;
     }
-    .ok { color: #00ff88; }
-    .fail { color: #ff4466; }
+    .ok { color: #0f0; }
+    .fail { color: #f44; }
+    a { color: #0ff; }
     .spinner {
-      display: inline-block; width: 16px; height: 16px;
-      border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+      display: inline-block; width: 14px; height: 14px;
+      border: 2px solid rgba(0,255,255,0.3); border-top-color: #0ff;
       border-radius: 50%; animation: spin 0.8s linear infinite;
       margin-right: 8px; vertical-align: middle;
     }
@@ -58,53 +57,44 @@
 </head>
 <body>
   <div class="container">
-    <h1>SMS BOMBER</h1>
-    <p class="subtitle">Nhập số điện thoại và số lần spam. Chạy trên Render, miễn phí.</p>
+    <h1>WEB CRAWLER</h1>
+    <p class="subtitle">Nhập URL, tải toàn bộ source code, nén ZIP. Chạy trên Render.</p>
 
-    <label>Số điện thoại</label>
-    <input type="tel" id="phone" placeholder="Ví dụ: 0912345678" maxlength="10">
+    <label>URL Website</label>
+    <input type="text" id="url" placeholder="Ví dụ: example.com" value="">
 
-    <label>Số lần spam</label>
-    <input type="number" id="count" placeholder="Ví dụ: 5" min="1" max="50" value="5">
-
-    <button id="btn" onclick="spam()">BẮT ĐẦU SPAM</button>
+    <button id="btn" onclick="crawl()">BẮT ĐẦU CRAWL</button>
 
     <div id="result"></div>
   </div>
 
   <script>
-    async function spam() {
-      const phone = document.getElementById('phone').value.trim();
-      const count = parseInt(document.getElementById('count').value);
+    async function crawl() {
+      const url = document.getElementById('url').value.trim();
       const btn = document.getElementById('btn');
       const result = document.getElementById('result');
 
-      if (!phone || !count) return alert('Nhập đủ thông tin đi.');
+      if (!url) return alert('Nhập URL đi.');
 
       btn.disabled = true;
-      btn.innerHTML = '<span class="spinner"></span> Đang spam...';
+      btn.innerHTML = '<span class="spinner"></span> Đang crawl...';
       result.style.display = 'block';
-      result.innerHTML = '<p>Đang gửi request...</p>';
+      result.innerHTML = '<p>Đang tải toàn bộ source...</p>';
 
       try {
-        const res = await fetch('/api/spam', {
+        const res = await fetch('/api/crawl', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ phone, count })
+          body: JSON.stringify({ url })
         });
         const data = await res.json();
 
         if (data.error) {
           result.innerHTML = `<p class="fail">Lỗi: ${data.error}</p>`;
         } else {
-          const okCount = data.details.filter(d => d.status === 'ok').length;
-          const failCount = data.details.filter(d => d.status === 'fail').length;
           result.innerHTML = `
-            <p><b>Tổng đã gửi:</b> ${data.totalSent} / ${data.totalAttempts}</p>
-            <p class="ok">Thành công: ${okCount}</p>
-            <p class="fail">Thất bại: ${failCount}</p>
-            <hr style="border-color: rgba(255,255,255,0.1); margin: 10px 0;">
-            ${data.details.map(d => `<p class="${d.status === 'ok' ? 'ok' : 'fail'}">${d.name}: ${d.status}</p>`).join('')}
+            <p class="ok">✅ Crawl xong!</p>
+            <p>Tải file ZIP: <a href="${data.download}" target="_blank">${data.download}</a></p>
           `;
         }
       } catch (err) {
@@ -112,7 +102,7 @@
       }
 
       btn.disabled = false;
-      btn.innerHTML = 'BẮT ĐẦU SPAM';
+      btn.innerHTML = 'BẮT ĐẦU CRAWL';
     }
   </script>
 </body>
